@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Songo — Jeu Traditionnel Ekang/Betii</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="songo_style.css"/>
+</head>
+<body>
+
+<!-- ===== EN-TÊTE ===== -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-title-block">
+      <span class="header-eyebrow">Jeu Traditionnel</span>
+      <h1 class="header-title">Songo</h1>
+      <span class="header-subtitle">Variante Ekang · Betii</span>
+    </div>
+    <div class="header-controls">
+      <span id="online-room-display" class="online-room-badge" style="display:none"></span>
+      <button id="btn-rules"    class="btn-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Règles
+      </button>
+      <button id="btn-new-game" class="btn-header btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+        Nouvelle Partie
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== BARRE DE MODES ===== -->
+<nav class="mode-bar-wrapper" aria-label="Modes de jeu">
+  <div id="mode-bar" class="mode-bar"></div>
+</nav>
+
+<!-- ===== ZONE DE JEU ===== -->
+<main class="game-area">
+
+  <!-- Bandeau J2 -->
+  <section class="player-banner player-banner--top" id="banner-p2">
+    <div class="player-info">
+      <div class="player-avatar" id="avatar-p2">J2</div>
+      <div class="player-meta">
+        <span class="player-name" id="name-p2">Joueur 2</span>
+        <span class="player-role">NORD — distribue gauche → droite</span>
+      </div>
+    </div>
+    <div class="player-score-block">
+      <span class="score-label">Graines capturées</span>
+      <span class="score-value" id="score-p2">0</span>
+    </div>
+  </section>
+
+  <!-- Plateau -->
+  <div class="board-container">
+    <div class="board-wood-frame">
+      <div class="board-ornament board-ornament--left" aria-hidden="true">
+        <svg viewBox="0 0 40 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 10 Q30 70 20 140 Q10 210 20 270" stroke="currentColor" stroke-width="2" opacity=".35"/>
+          <circle cx="20" cy="10" r="5" fill="currentColor" opacity=".25"/>
+          <circle cx="20" cy="140" r="7" fill="currentColor" opacity=".2"/>
+          <circle cx="20" cy="270" r="5" fill="currentColor" opacity=".25"/>
+          <path d="M8 55 Q20 65 32 55" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+          <path d="M8 185 Q20 195 32 185" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+        </svg>
+      </div>
+
+      <!-- Indicateur sens anti-horaire -->
+      <div class="board-grid" id="board-grid" role="grid">
+        <!-- Flèche sens anti-horaire (haut) -->
+        <div class="direction-hint direction-hint--top" aria-hidden="true">
+          <span class="dir-arrow">→</span>
+          <span class="dir-label">sens NORD</span>
+          <span class="dir-arrow">→</span>
+        </div>
+        <div class="board-row board-row--top"    role="row" id="row-p2"></div>
+        <div class="board-divider" aria-hidden="true"><div class="divider-pattern"></div></div>
+        <div class="board-row board-row--bottom" role="row" id="row-p1"></div>
+        <!-- Flèche sens anti-horaire (bas) -->
+        <div class="direction-hint direction-hint--bottom" aria-hidden="true">
+          <span class="dir-arrow">←</span>
+          <span class="dir-label">sens SUD</span>
+          <span class="dir-arrow">←</span>
+        </div>
+      </div>
+
+      <div class="board-ornament board-ornament--right" aria-hidden="true">
+        <svg viewBox="0 0 40 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 10 Q30 70 20 140 Q10 210 20 270" stroke="currentColor" stroke-width="2" opacity=".35"/>
+          <circle cx="20" cy="10" r="5" fill="currentColor" opacity=".25"/>
+          <circle cx="20" cy="140" r="7" fill="currentColor" opacity=".2"/>
+          <circle cx="20" cy="270" r="5" fill="currentColor" opacity=".25"/>
+          <path d="M8 55 Q20 65 32 55" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+          <path d="M8 185 Q20 195 32 185" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bandeau J1 -->
+  <section class="player-banner player-banner--bottom" id="banner-p1">
+    <div class="player-info">
+      <div class="player-avatar" id="avatar-p1">J1</div>
+      <div class="player-meta">
+        <span class="player-name" id="name-p1">Joueur 1</span>
+        <span class="player-role">SUD — distribue droite → gauche</span>
+      </div>
+    </div>
+    <div class="player-score-block">
+      <span class="score-label">Graines capturées</span>
+      <span class="score-value" id="score-p1">0</span>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== BARRE D'ÉTAT ===== -->
+<div class="status-bar" id="status-bar" role="status" aria-live="polite">
+  <div class="status-inner">
+    <div class="status-icon" id="status-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <p class="status-message" id="status-message">Chargement…</p>
+  </div>
+</div>
+
+<!-- ===== TOASTS ===== -->
+<div class="toast-container" id="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- ===== MODAL CONFIGURATION ===== -->
+<div class="modal-overlay" id="modal-setup" role="dialog" aria-modal="true" aria-labelledby="setup-title" hidden>
+  <div class="modal-panel modal-panel--setup">
+    <div class="modal-header">
+      <h2 id="setup-title" class="modal-title">Configuration</h2>
+    </div>
+    <div class="modal-body setup-body">
+      <p class="setup-mode-label" id="setup-mode-label">Joueur vs Joueur</p>
+      <div id="setup-names" class="setup-section">
+        <label class="setup-label">Nom Joueur 1 (SUD)
+          <input id="setup-name1" class="setup-input" type="text" placeholder="Joueur 1" maxlength="20"/>
+        </label>
+        <label class="setup-label">Nom Joueur 2 (NORD)
+          <input id="setup-name2" class="setup-input" type="text" placeholder="Joueur 2" maxlength="20"/>
+        </label>
+      </div>
+      <div id="setup-pve-opts" class="setup-section" style="display:none">
+        <label class="setup-label">Niveau de l'IA
+          <select id="setup-ai-level" class="setup-select">
+            <option value="easy">Facile (aléatoire)</option>
+            <option value="medium" selected>Moyen (heuristique)</option>
+            <option value="hard">Difficile (Minimax)</option>
+          </select>
+        </label>
+        <label class="setup-label">L'IA joue en tant que
+          <select id="setup-ai-side" class="setup-select">
+            <option value="1" selected>Joueur 2 (NORD)</option>
+            <option value="0">Joueur 1 (SUD)</option>
+          </select>
+        </label>
+      </div>
+      <div id="setup-online-opts" class="setup-section" style="display:none">
+        <p class="setup-hint">Ouvrez <strong>deux onglets</strong> avec le même fichier et entrez le même code de salle.</p>
+        <label class="setup-label">Code de salle
+          <input id="setup-room-id" class="setup-input" type="text" placeholder="ex: BAOBAB" maxlength="10"/>
+        </label>
+        <label class="setup-label">Vous jouez en tant que
+          <select id="setup-online-side" class="setup-select">
+            <option value="0">Joueur 1 (SUD)</option>
+            <option value="1">Joueur 2 (NORD)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="setup-cancel" class="btn-setup-secondary">Annuler</button>
+      <button id="setup-start"  class="btn-setup-primary">Commencer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL RÈGLES ===== -->
+<div class="modal-overlay" id="modal-rules" role="dialog" aria-modal="true" aria-labelledby="rules-title" hidden>
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h2 id="rules-title" class="modal-title">Règles du Songo</h2>
+      <button class="modal-close" id="btn-close-rules" aria-label="Fermer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-tabs" role="tablist">
+      <button class="modal-tab active" role="tab" data-tab="setup">Plateau</button>
+      <button class="modal-tab" role="tab" data-tab="play">Distribution</button>
+      <button class="modal-tab" role="tab" data-tab="captures">Captures</button>
+      <button class="modal-tab" role="tab" data-tab="solidarite">Solidarité</button>
+      <button class="modal-tab" role="tab" data-tab="interdits">Interdits</button>
+      <button class="modal-tab" role="tab" data-tab="fin">Fin de partie</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- TAB : Plateau -->
+      <div class="tab-panel active" id="tab-setup">
+        <h3>Plateau &amp; Graines</h3>
+        <p>Le plateau comporte <strong>2 rangées de 7 cases</strong> (14 cases). La partie commence avec <strong>70 graines</strong> — 5 par case.</p>
+        <div class="rules-board-visual">
+          <div class="rbv-label rbv-label--nord">NORD — Joueur 2 &nbsp;→ distribue gauche→droite →</div>
+          <div class="rbv-row rbv-row--nord">
+            <div class="rbv-cell rbv-cell--c7" title="Case 7 de J2 (la plus à sa gauche visuellement)">7</div>
+            <div class="rbv-cell">6</div>
+            <div class="rbv-cell">5</div>
+            <div class="rbv-cell">4</div>
+            <div class="rbv-cell">3</div>
+            <div class="rbv-cell">2</div>
+            <div class="rbv-cell rbv-cell--special" title="Case 1 de J2 (la plus à sa droite visuellement)">1<span class="rbv-star">★</span></div>
+          </div>
+          <div class="rbv-arrow">↑ anti-horaire : jonction droite ↑ &nbsp;|&nbsp; ↓ anti-horaire : jonction gauche ↓</div>
+          <div class="rbv-row rbv-row--sud">
+            <div class="rbv-cell rbv-cell--special" title="Case 1 de J1 (la plus à sa gauche visuellement)">1<span class="rbv-star">★</span></div>
+            <div class="rbv-cell">2</div>
+            <div class="rbv-cell">3</div>
+            <div class="rbv-cell">4</div>
+            <div class="rbv-cell">5</div>
+            <div class="rbv-cell">6</div>
+            <div class="rbv-cell rbv-cell--c7" title="Case 7 de J1 (la plus à sa droite)">7</div>
+          </div>
+          <div class="rbv-label rbv-label--sud">← distribue droite→gauche ← &nbsp; SUD — Joueur 1</div>
+        </div>
+        <p class="rules-note"><span class="rbv-star">★</span> = case 1 de chaque joueur (côté où il reçoit les graines de l'adversaire). Case 7 = là où il commence sa distribution.</p>
+      </div>
+
+      <!-- TAB : Distribution -->
+      <div class="tab-panel" id="tab-play">
+        <h3>Choisir une case</h3>
+        <p>À votre tour, choisissez une de vos cases non vide. Ramassez <strong>toutes</strong> ses graines et distribuez-les <strong>une par une</strong> dans le sens <strong>anti-horaire</strong> :</p>
+        <p>• Joueur <strong>SUD</strong> : distribue de <strong>droite → gauche</strong> sur sa rangée, puis monte sur la rangée NORD de <strong>gauche → droite</strong>.</p>
+        <p>• Joueur <strong>NORD</strong> : distribue de <strong>gauche → droite</strong> sur sa rangée, puis descend sur la rangée SUD de <strong>droite → gauche</strong>.</p>
+        <h3>Tour complet (&gt; 13 graines)</h3>
+        <p>Si la case choisie contient <strong>plus de 13 graines</strong> (≥ 14), vous sautez cette case lors de votre premier passage — la distribution repart depuis la suivante. Les passages ultérieurs incluent la case de départ normalement.</p>
+      </div>
+
+      <!-- TAB : Captures -->
+      <div class="tab-panel" id="tab-captures">
+        <h3>Condition de capture</h3>
+        <p>Les captures s'effectuent <strong>uniquement dans le camp adverse</strong>. Il y a prise lorsque la <strong>dernière graine distribuée</strong> tombe dans une case adverse dont le total devient <strong>2, 3 ou 4</strong> — vous capturez alors toutes ces graines (2 à 4).</p>
+        <h3>Cas particulier : case 1 adverse</h3>
+        <p>Si la distribution se termine sur la <strong>case 1 adverse</strong> (la plus à sa gauche) <em>sans tour complet</em>, il n'y a <strong>pas de capture</strong> de 2‑4 graines sur cette case. Cependant, si la distribution s'y termine après <strong>au moins un tour complet</strong> (≥ 14 graines distribuées), on capture <strong>uniquement 1 graine</strong> (la dernière déposée).</p>
+        <h3>Capture en chaîne</h3>
+        <p>Si la case <strong>précédente</strong> (dans le sens de distribution) est aussi une case adverse contenant 2, 3 ou 4 graines, elle est également capturée — et ainsi de suite. La case 1 adverse <em>peut</em> être incluse dans une prise en chaîne.</p>
+      </div>
+
+      <!-- TAB : Solidarité -->
+      <div class="tab-panel" id="tab-solidarite">
+        <h3>⚖ Règle de solidarité</h3>
+        <p>Lorsque <strong>toutes les cases de votre adversaire sont vides</strong>, vous êtes obligé de jouer un coup qui distribue des graines dans son territoire :</p>
+        <p><strong>1.</strong> Vous devez distribuer <strong>au moins 7 graines</strong> dans le camp adverse si c'est possible.</p>
+        <p><strong>2.</strong> Si aucun de vos coups ne peut envoyer 7 graines, jouez le coup qui en envoie le <strong>maximum possible</strong>.</p>
+        <p><strong>3.</strong> Si <em>aucun</em> de vos coups n'atteint le camp adverse, la <strong>partie s'arrête</strong> immédiatement : les graines restantes reviennent au propriétaire du camp où elles se trouvent.</p>
+      </div>
+
+      <!-- TAB : Interdits -->
+      <div class="tab-panel" id="tab-interdits">
+        <h3>⚠ Interdit 1 — La case 7</h3>
+        <p>Il est interdit de semer <strong>1 ou 2 graines</strong> chez l'adversaire à l'aide de votre <strong>case 7</strong> (la plus à votre droite). Si vous y êtes contraint par la règle de solidarité, ces graines reviennent quand même à l'adversaire sans être capturées.</p>
+        <div class="rules-board-visual rules-board-visual--sm">
+          <div class="rbv-row rbv-row--nord">
+            <div class="rbv-cell rbv-cell--c7 rbv-cell--highlight">7</div>
+            <div class="rbv-cell">6</div><div class="rbv-cell">5</div><div class="rbv-cell">4</div><div class="rbv-cell">3</div><div class="rbv-cell">2</div>
+            <div class="rbv-cell rbv-cell--special">1★</div>
+          </div>
+          <div class="rbv-row rbv-row--sud">
+            <div class="rbv-cell rbv-cell--special">1★</div>
+            <div class="rbv-cell">2</div><div class="rbv-cell">3</div><div class="rbv-cell">4</div><div class="rbv-cell">5</div><div class="rbv-cell">6</div>
+            <div class="rbv-cell rbv-cell--c7 rbv-cell--highlight">7</div>
+          </div>
+        </div>
+        <h3>⚠ Interdit 2 — Vider le camp adverse</h3>
+        <p>Il est <strong>interdit de vider complètement le camp adverse</strong>. Si un coup risque de le vider, il reste jouable, mais <strong>aucune prise ne sera effectuée</strong> : les graines restent en place.</p>
+      </div>
+
+      <!-- TAB : Fin de partie -->
+      <div class="tab-panel" id="tab-fin">
+        <h3>Conditions de fin</h3>
+        <p>La partie s'arrête dès que l'une des conditions suivantes est atteinte :</p>
+        <p><strong>1.</strong> La <strong>solidarité est impossible</strong> : le camp d'un joueur est vide et son adversaire ne peut pas lui distribuer de graines.</p>
+        <p><strong>2.</strong> Il reste <strong>moins de 10 graines</strong> au total sur le plateau : chaque joueur récupère les graines de son camp.</p>
+        <p><strong>3.</strong> Un joueur atteint <strong>au moins 40 graines</strong> capturées.</p>
+        <h3>Victoire</h3>
+        <p>Le vainqueur est le joueur qui remporte <strong>au moins 40 graines</strong> sur les 70. Si aucun joueur n'en accumule plus de 39, la partie est <strong>nulle</strong>.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL FIN DE PARTIE ===== -->
+<div class="modal-overlay" id="modal-endgame" role="dialog" aria-modal="true" aria-labelledby="endgame-title" hidden>
+  <div class="modal-panel modal-panel--endgame">
+    <div class="endgame-decoration" aria-hidden="true">
+      <svg viewBox="0 0 120 60" fill="none"><circle cx="20" cy="30" r="8" opacity=".3"/><circle cx="40" cy="20" r="5" opacity=".2"/><circle cx="60" cy="30" r="10" opacity=".35"/><circle cx="80" cy="20" r="5" opacity=".2"/><circle cx="100" cy="30" r="8" opacity=".3"/></svg>
+    </div>
+    <h2 id="endgame-title" class="endgame-title">Fin de partie</h2>
+    <p class="endgame-winner" id="endgame-winner">—</p>
+    <div class="endgame-scores">
+      <div class="endgame-score-card">
+        <span class="esc-name" id="eg-name-p1">Joueur 1</span>
+        <span class="esc-value" id="eg-score-p1">0</span>
+        <span class="esc-label">graines</span>
+      </div>
+      <div class="endgame-score-card">
+        <span class="esc-name" id="eg-name-p2">Joueur 2</span>
+        <span class="esc-value" id="eg-score-p2">0</span>
+        <span class="esc-label">graines</span>
+      </div>
+    </div>
+    <button class="btn-endgame" id="btn-replay">Rejouer</button>
+  </div>
+</div>
+
+<script src="songo_script.js"></script>
+</body>
+</html>
